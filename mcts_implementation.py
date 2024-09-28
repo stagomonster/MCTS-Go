@@ -1,4 +1,4 @@
-import go_project_old
+from go_project import *
 import numpy as np
 
 
@@ -26,11 +26,24 @@ class MCTS:
     def visits(self):
         return self.number_visits
     
-    def gen_playout_moves(self): #get legal actions
-        pass
+    def violatesKo(self, point):
+        
+        return False
     
-    def game_completed(self):
-        pass
+    def gen_playout_move(self): #get a legal action
+        point = random_point()
+        while self.board_state[point[0], point[1]] != E or self.violatesKo(point):
+            point = random_point()
+        
+        return point
+    
+    def game_completed(self): #Ignore cases in which playouts of every position would be invalid, edge cases are minimal in effect
+        for row in range (len(self.board_state)):
+            for col in range(len(self.board_state[0])):
+                if self.board_state[row][col] == E:
+                    return False
+        return True
+    
         
 
 def main():
