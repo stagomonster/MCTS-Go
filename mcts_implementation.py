@@ -13,7 +13,7 @@ class MCTS:
         self.children = []
         self.unvisited_nodes = []
         self.settled = False
-        self.hash = 0 
+        self.hash = 0
         self.number_visits = 0
         
 

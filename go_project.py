@@ -1,7 +1,6 @@
 import pygame
 from random import randint
 
-
 #Colors
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -95,7 +94,7 @@ def random_point():
     return (randint(0,ROW_SQUARES), randint(0,COL_SQUARES))
 
 
-#ZOBRIST FUNCTIONS FOR KO RULE
+#ZOBRIST FUNCTIONS FOR KO RULE - See Zobrist Hash
 def zobrist_table():
     z = [[[randint(1,2**64-1) for player in range(0,2)] 
           for row in range(0, ROW_SQUARES)] 
@@ -152,6 +151,9 @@ def possible_moves(): #TO BE IMPLEMENTED
     
     return
 
+
+#Scoring Methods 
+#Area Scoring (Chinese Scoring)
 def area_score():
     score = score_board_flood()
     black_p = 0
@@ -210,6 +212,7 @@ def score_board():
                 experimental_scores[r][c] = board[r][c]
     return experimental_scores
 
+#Flood Search Function
 def flood_square(x,y,current_score): # black -1 white +1, eval positive or negative EXPERIMENTAL, NOT FOR SCORING AT END OF GAME
     score = current_score
 
@@ -237,7 +240,7 @@ def flood_square(x,y,current_score): # black -1 white +1, eval positive or negat
         return score
         
         
-
+#Function for click action
 def click(x,y):
     global turn, board, WHITE_CAPTURES, BLACK_CAPTURES, hashes, last_hash
     square = board[x][y]
@@ -281,7 +284,7 @@ def click(x,y):
             else:
                 BLACK_CAPTURES += captures
         
-
+#Flood Fill Search
 def flood_fill(position, x,y, color):
     if visited_squares[x][y] == 1:
         return False
@@ -298,6 +301,7 @@ def flood_fill(position, x,y, color):
         live|= y > 0 and flood_fill(position, x, y-1, color)
         live|= y<COL_SQUARES-1 and flood_fill(position, x,y+1,color)
         return live
+
 
 def check_empty_color(x,y):
     global visited_squares
@@ -392,6 +396,7 @@ def dist(a,b,c,d):
 ##            for c in range(0, col_squares):
 ##                
 
+#Check Captures to remove and KO Rule
 def check_captures(color):
     global board, visited_squares, BLACK_CAPTURES
     removed_squares = [[0 for c in range(COL_SQUARES)] for r in range(ROW_SQUARES)] #0 - not 1 - captured
