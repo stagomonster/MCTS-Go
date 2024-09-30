@@ -1,53 +1,158 @@
 from go_project import *
 import numpy as np
+from collections import defaultdict
 
-
-
-#tree policy: 50% children, node, may modify
-
-class MCTS:
-    def __init__(self, state, parent=None): 
-        #TODO complete implementation of init mcts
-        self.board_state = state #current state
-        self.parent = parent #last_move
+class MonteCarloTreeSearchNode():
+    def __init__(self, state, parent=None, parent_action=None):
+        self.state = state
+        self.parent = parent
+        self.parent_action = parent_action
         self.children = []
-        self.unvisited_nodes = []
-        self.settled = False
-        self.hash = 0
-        self.number_visits = 0
-        
-
-        pass
+        self._number_of_visits = 0
+        self._results = defaultdict(int)
+        self._results[1] = 0
+        self._results[-1] = 0
+        self._untried_actions = None
+        self._untried_actions = self.untried_actions()
+        return
+    
+    def untried_actions(self):
+        self._untried_actions = self.state.get_legal_actions()
+        return self._untried_actions
+    
+    def q(self):
+        wins = self._results[1]
+        loses = self._results[-1]
+        return wins - loses
+    
     def expand(self):
-        pass
-    def backpropogate(self, result):
+        action = self._untried_actions.pop()
+        next_state = self.state.move(action)
+        child_node = MonteCarloTreeSearchNode(
+            next_state, parent=self, parent_action=action)
+
+        self.children.append(child_node)
+        return child_node 
+    
+    def is_terminal_node(self):
+        return self.state.is_game_over()
+
+    def rollout(self):
+        current_rollout_state = self.state
+        
+        while not current_rollout_state.is_game_over():
+            
+            possible_moves = current_rollout_state.get_legal_actions()
+            
+            action = self.rollout_policy(possible_moves)
+            current_rollout_state = current_rollout_state.move(action)
+        return current_rollout_state.game_result()
+
+    def backpropagate(self, result):
+        self._number_of_visits += 1.
+        self._results[result] += 1.
+        if self.parent:
+            self.parent.backpropagate(result)
+
+    def is_fully_expanded(self):
+        return len(self._untried_actions) == 0
+
+    def best_child(self, c_param=0.1):
+        
+        choices_weights = [(c.q() / c.n()) + c_param * np.sqrt((2 * np.log(self.n()) / c.n())) for c in self.children]
+        return self.children[np.argmax(choices_weights)]
+
+    def rollout_policy(self, possible_moves):
+        
+        return possible_moves[np.random.randint(len(possible_moves))]
+
+    def _tree_policy(self):
+
+        current_node = self
+        while not current_node.is_terminal_node():
+            
+            if not current_node.is_fully_expanded():
+                return current_node.expand()
+            else:
+                current_node = current_node.best_child()
+        return current_node
+
+    def best_action(self):
+        simulation_no = 100
+        
+        
+        for i in range(simulation_no):
+            
+            v = self._tree_policy()
+            reward = v.rollout()
+            v.backpropagate(reward)
+        
+        return self.best_child(c_param=0.)
+    
+    def get_legal_actions(self): 
         pass
 
-    def visits(self):
-        return self.number_visits
-    
-    def violatesKo(self, point):
-        
-        return False
-    
-    def gen_playout_move(self): #get a legal action
-        point = random_point()
-        while self.board_state[point[0], point[1]] != E or self.violatesKo(point):
-            point = random_point()
-        
-        return point
-    
-    def game_completed(self): #Ignore cases in which playouts of every position would be invalid, edge cases are minimal in effect
-        for row in range (len(self.board_state)):
-            for col in range(len(self.board_state[0])):
-                if self.board_state[row][col] == E:
-                    return False
-        return True
-    
-        
+    def is_game_over(self):
+        pass
+
+    def game_result(self):
+        pass
+
+    def move(self):
+        pass
+
 
 def main():
-    #TODO main function
-    pass
+    root = MonteCarloTreeSearchNode(state = board)
+    selected_node = root.best_action()
+    return
+
+
+# #tree policy: 50% children, node, may modify
+
+# class MCTS:
+#     def __init__(self, state, parent=None): 
+#         #TODO complete implementation of init mcts
+#         self.board_state = state #current state
+#         self.parent = parent #last_move
+#         self.children = []
+#         self.unvisited_nodes = []
+#         self.settled = False
+#         self.hash = 0
+#         self.number_visits = 0
+        
+
+#         pass
+#     def expand(self):
+#         pass
+#     def backpropogate(self, result):
+#         pass
+
+#     def visits(self):
+#         return self.number_visits
+    
+#     def violatesKo(self, point):
+        
+#         return False
+    
+#     def gen_playout_move(self): #get a legal action
+#         point = random_point()
+#         while self.board_state[point[0], point[1]] != E or self.violatesKo(point):
+#             point = random_point()
+        
+#         return point
+    
+#     def game_completed(self): #Ignore cases in which playouts of every position would be invalid, edge cases are minimal in effect
+#         for row in range (len(self.board_state)):
+#             for col in range(len(self.board_state[0])):
+#                 if self.board_state[row][col] == E:
+#                     return False
+#         return True
+    
+        
+
+# def main():
+#     #TODO main function
+#     pass
     
     
