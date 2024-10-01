@@ -79,8 +79,6 @@ class MonteCarloTreeSearchNode():
 
     def best_action(self):
         simulation_no = 100
-        
-        
         for i in range(simulation_no):
             
             v = self._tree_policy()
@@ -93,12 +91,18 @@ class MonteCarloTreeSearchNode():
         pass
 
     def is_game_over(self):
-        pass
+        for row in range (len(self.state)):
+            for col in range(len(self.state[0])):
+                if self.board_state[row][col] == E:
+                    return False
+        return True
 
     def game_result(self):
         pass
 
     def move(self):
+        point = random_point()
+        
         pass
 
 
