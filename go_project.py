@@ -75,21 +75,6 @@ def draw_circle_alpha(surface, color, center, radius):
     pygame.draw.circle(shape_surf, color, (radius, radius), radius)
     surface.blit(shape_surf, target_rect)
 
-def update_groups(): #TO BE IMPLEMENTED
-    global groups
-    for r in range(0, len(board)):
-        for c in range(0,len(board[0])):
-            if board[r][c] == W:
-                return
-            elif board[r][c] == B:
-                return
-            else:
-                return
-
-def update_liberties():
-    #TO BE IMPLEMENTED
-    return
-
 def random_point():
     return (randint(0,ROW_SQUARES), randint(0,COL_SQUARES))
 
@@ -146,11 +131,6 @@ def check_hash(h):
         return True
     else:
         return False
-
-def possible_moves(): #TO BE IMPLEMENTED
-    
-    return
-
 
 #Scoring Methods 
 #Area Scoring (Chinese Scoring)
@@ -342,6 +322,7 @@ def check_distance_color(x,y):
         return W
     else:
         return E
+    
 
 def reset_minimum_distance():
     global MINIMUM_DISTANCE_W, MINIMUM_DISTANCE_B
@@ -389,13 +370,6 @@ def distance(x,y): #Spight Influence Model (wavefront analysis, or just distance
 def dist(a,b,c,d):
     return abs(c-a)+abs(d-b)
 
-##def zobrist_influence(repetitions):
-##    influence = [[elem*50 for elem in row_squares] for row_squares in board]
-##    for i in range(0,repetitions):
-##        for r in range(0, row_squares):
-##            for c in range(0, col_squares):
-##                
-
 #Check Captures to remove and KO Rule
 def check_captures(color):
     global board, visited_squares, BLACK_CAPTURES
@@ -419,7 +393,6 @@ def check_potential_captures(position, color): #Assume valid input, require pote
                 visited_squares = [[0 for c in range(COL_SQUARES)] for r in range(ROW_SQUARES)]
                 if not flood_fill(position, r,c,color):
                     removed_squares[r][c] = 1
-
     return removed_squares
 
 
@@ -441,7 +414,7 @@ def main():
     clock = pygame.time.Clock()
     hover_row = 0
     hover_col = 0
-    alpha = 150 #Transparency of the hover piece
+    # alpha = 150 #Transparency of the hover piece
     
     stat_font = pygame.font.SysFont("georgia", 20)
     text_buffer = 20
@@ -455,10 +428,10 @@ def main():
     while gameRunning:
         window.fill((242,176,109))
         if turn == B:
-            pieceColor = BLACK
+            # pieceColor = BLACK
             alphaColor = BLACK_ALPHA
         else:
-            pieceColor = WHITE
+            # pieceColor = WHITE
             alphaColor = WHITE_ALPHA
 
         #draw stat screen
