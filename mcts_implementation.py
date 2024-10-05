@@ -3,6 +3,7 @@ import numpy as np
 from collections import defaultdict
 
 class MonteCarloTreeSearchNode():
+    
     def __init__(self, state, parent=None, parent_action=None):
         self.state = state
         self.parent = parent
@@ -16,16 +17,16 @@ class MonteCarloTreeSearchNode():
         self._untried_actions = self.untried_actions()
         return
     
-    def untried_actions(self):
+    def untried_actions(self): #Potential moves
         self._untried_actions = self.state.get_legal_actions()
         return self._untried_actions
     
-    def q(self):
+    def q(self): 
         wins = self._results[1]
         loses = self._results[-1]
         return wins - loses
     
-    def expand(self):
+    def expand(self): 
         action = self._untried_actions.pop()
         next_state = self.state.move(action)
         child_node = MonteCarloTreeSearchNode(
@@ -34,7 +35,7 @@ class MonteCarloTreeSearchNode():
         self.children.append(child_node)
         return child_node 
     
-    def is_terminal_node(self):
+    def is_terminal_node(self): 
         return self.state.is_game_over()
 
     def rollout(self):
@@ -58,16 +59,13 @@ class MonteCarloTreeSearchNode():
         return len(self._untried_actions) == 0
 
     def best_child(self, c_param=0.1):
-        
         choices_weights = [(c.q() / c.n()) + c_param * np.sqrt((2 * np.log(self.n()) / c.n())) for c in self.children]
         return self.children[np.argmax(choices_weights)]
 
-    def rollout_policy(self, possible_moves):
-        
+    def rollout_policy(self, possible_moves): #May Change
         return possible_moves[np.random.randint(len(possible_moves))]
 
-    def _tree_policy(self):
-
+    def _tree_policy(self): #May Change
         current_node = self
         while not current_node.is_terminal_node():
             
@@ -98,7 +96,7 @@ class MonteCarloTreeSearchNode():
         return True
 
     def game_result(self):
-        pass
+        return self.is_game_over()
 
     def move(self):
         point = random_point()

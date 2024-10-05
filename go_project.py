@@ -7,7 +7,6 @@ WHITE = (255,255,255)
 BLACK_ALPHA = (0,0,0,150)
 WHITE_ALPHA = (255,255,255,150)
 
-
 #Window Values
 WHEIGHT = 600
 WWIDTH = 900
@@ -61,12 +60,6 @@ turn = 1 #starts with black
 
 WHITE_CAPTURES = 0
 BLACK_CAPTURES = 0
-
-#GROUPS (AI)
-chains = []
-influence = []
-liberties = []
-weighting = []
 
 # easier way to make transparent overlay (hover piece)
 def draw_circle_alpha(surface, color, center, radius):
