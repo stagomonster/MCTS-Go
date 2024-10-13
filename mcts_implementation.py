@@ -107,7 +107,8 @@ class MonteCarloTreeSearchNode():
         
 
 def violatesKO(state, move, hashlist):
-    pass
+    r_squares = check_captures(state)
+    return True if len(r_squares) > 0 else False
 
 def main():
     root = MonteCarloTreeSearchNode(state = board)
