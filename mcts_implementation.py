@@ -2,8 +2,19 @@ from go_project import *
 import numpy as np
 from collections import defaultdict
 
+'''
+TODO: 
+
+backpropogation -> validate results of node
+apply/modify current tree policy
+decision making dependent on both quality + confidence (n)
+efficiency in data management
+efficiency in tracking progress
+
+hash instantiation for KO (low priority)
+'''
+
 class MonteCarloTreeSearchNode():
-    
     def __init__(self, state, parent=None, parent_action=None):
         self.state = state
         self.parent = parent
@@ -18,8 +29,14 @@ class MonteCarloTreeSearchNode():
         return
     
     def untried_actions(self): #Potential moves
-        self._untried_actions = self.state.get_legal_actions()
-        return self._untried_actions
+        if self.untried_actions == None:
+            return self.state.get_legal_actions()
+        for row in self.untried_actions:
+            for col in self.untried_actions[0]:
+                pass
+        legal_actions = self.state.get_legal_actions()
+        
+        return legal_actions
     
     def q(self): 
         wins = self._results[1]
@@ -86,7 +103,16 @@ class MonteCarloTreeSearchNode():
         return self.best_child(c_param=0.)
     
     def get_legal_actions(self): 
-        pass
+        #TODO: Make more efficient by recording move hash
+        arr = [[0 for row in range(len(self.state))] for col in range(0,len(self.state[0]))]
+
+        for row in range(len(self.state)):
+            for col in range(len(self.state[0])):
+                if self.state[row][col] == E:
+                    arr[row][col] = 1
+                else:
+                    arr[row][col] = 0
+        return arr
 
     def is_game_over(self):
         for row in range (len(self.state)):
@@ -106,9 +132,10 @@ class MonteCarloTreeSearchNode():
         return point
         
 
-def violatesKO(state, move, hashlist):
-    r_squares = check_captures(state)
-    return True if len(r_squares) > 0 else False
+def violatesKO(state, move, hashlist): 
+    return False #Accuracy negligible, checking may impact performance
+    #  r_squares = check_captures(state)
+    # return True if len(r_squares) > 0 else False
 
 def main():
     root = MonteCarloTreeSearchNode(state = board)
